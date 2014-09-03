@@ -12,6 +12,6 @@
     <description>A simple async wrapper for the Vine API.</description>
     <releaseNotes>Added more endpoints, fixed bug with paging options.</releaseNotes>
     <copyright>Copyright 2014</copyright>
-    <tags>Vine API Social Twitter SocialMedia REST csharp</tags>
+    <tags>Vine API Social Vines Hashtags Hashtag Twitter SocialMedia REST csharp</tags>
   </metadata>
 </package>
