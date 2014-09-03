@@ -54,7 +54,7 @@ Most calls are also wrapped with a standard paging wrapper.
         // do something
     }
 
-Endpoints Convered
+Endpoints Covered
 ------------------
 
 Users
