@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace VineSharp.Converters
 {
-    public class BoolConverter : JsonConverter
+    internal class BoolConverter : JsonConverter
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {

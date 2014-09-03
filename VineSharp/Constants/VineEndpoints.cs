@@ -1,22 +1,22 @@
 ﻿namespace VineSharp.Constants
 {
-    public static class VineEndpoints
+    internal static class VineEndpoints
     {
-        public const string BaseUrl = "https://api.vineapp.com/";
-         
-        public const string Authenticate = "users/authenticate";
-        public const string UsersMe = "users/me";
-        public const string UserProfile = "users/profiles/{userId}";
-        public const string UserFollowers = "users/{userId}/followers";
-        public const string UserFollowing = "users/{userId}/following";
+        internal const string BaseUrl = "https://api.vineapp.com/";
 
-        public const string TimelineUser = "timelines/users/{userId}";
-        public const string TimelineTag = "timelines/tags/{tag}";
-        public const string SinglePost = "timelines/posts/{postId}";
-        public const string TimelinesPopular = "timelines/popular";
+        internal const string Authenticate = "users/authenticate";
+        internal const string UsersMe = "users/me";
+        internal const string UserProfile = "users/profiles/{userId}";
+        internal const string UserFollowers = "users/{userId}/followers";
+        internal const string UserFollowing = "users/{userId}/following";
 
-        public const string PostLikes = "posts/{postId}/likes";
-        public const string PostComments = "posts/{postId}/comments";
+        internal const string TimelineUser = "timelines/users/{userId}";
+        internal const string TimelineTag = "timelines/tags/{tag}";
+        internal const string SinglePost = "timelines/posts/{postId}";
+        internal const string TimelinesPopular = "timelines/popular";
+
+        internal const string PostLikes = "posts/{postId}/likes";
+        internal const string PostComments = "posts/{postId}/comments";
         
     }
 }

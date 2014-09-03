@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using PortableRest;
 using VineSharp.Constants;
@@ -16,12 +15,15 @@ using VineSharp.Responses;
 
 namespace VineSharp
 {
+    /// <summary>
+    /// Class to wrap communication with the Vine api
+    /// </summary>
     public class VineClient
     {
         private const string Me = "me";
         private string _username;
         private string _password;
-        private VineAuthentication _authenticatedUser = null;
+        private VineAuthentication _authenticatedUser;
 
         /// <summary>
         /// Creates a new instance of a VineClient. If using this constructor, you must use SetCredentials before calling api methods that require auth.
@@ -65,104 +67,182 @@ namespace VineSharp
             request.AddParameter("password", _password);
 
             var result = await GetReuslt<VineAuthenticationResponse>(request, false);
-            _authenticatedUser = result.Data;
-
+            
             return result;
         }
 
+        ///////// User Data /////////
+        
+        /// <summary>
+        /// Gets the profile information for the current authenticated user
+        /// </summary>
+        /// <returns>Standard Response with User Profile data</returns>
         public async Task<VineProfileResponse> MyProfile()
         {
             var request = GetBaseRequest(VineEndpoints.UsersMe);
-
+            
             return await GetReuslt<VineProfileResponse>(request);
         }
 
+        /// <summary>
+        /// Gets the profile information for the supplied userId
+        /// </summary>
+        /// <param name="userId">Vine UserId</param>
+        /// <returns>Standard Response with User Profile data</returns>
         public async Task<VineProfileResponse> UserProfile(long userId)
         {
             var request = GetBaseUserRequest(VineEndpoints.UserProfile, userId.ToString(CultureInfo.InvariantCulture));
+            
             return await GetReuslt<VineProfileResponse>(request);
         }
 
-        public async Task<VineFollowersResponse> MyFollowers()
+        /// <summary>
+        /// Gets a paged list of people following the authenticated user
+        /// </summary>
+        /// <param name="options">paging options</param>
+        /// <returns>Standard Paged Response of VineFollowers (similar to a VineProfile)</returns>
+        public async Task<VineFollowersResponse> MyFollowers(VinePagingOptions options = null)
         {
-            var request = GetBaseUserRequest(VineEndpoints.UserFollowing, Me);
+            var request = GetBaseUserRequest(VineEndpoints.UserFollowing, Me, options);
+            
             return await GetReuslt<VineFollowersResponse>(request);
         }
 
-        public async Task<VineFollowersResponse> UserFollowers(long userId)
+        /// <summary>
+        /// Gets a paged list of people following a specified user
+        /// </summary>
+        /// <param name="userId">User Id</param>
+        /// <param name="options">paging options</param>
+        /// <returns>Standard Paged Response of VineFollowers (similar to a VineProfile)</returns>
+        public async Task<VineFollowersResponse> UserFollowers(long userId, VinePagingOptions options = null)
         {
-            var request = GetBaseUserRequest(VineEndpoints.UserFollowers, userId.ToString(CultureInfo.InvariantCulture));
-
+            var request = GetBaseUserRequest(VineEndpoints.UserFollowers, userId.ToString(CultureInfo.InvariantCulture), options);
+            
             return await GetReuslt<VineFollowersResponse>(request);
         }
 
-        public async Task<VineFollowersResponse> MyFollowing()
+        /// <summary>
+        /// Gets a paged list of people the authenticated user is following
+        /// </summary>
+        /// <param name="options">paging options</param>
+        /// <returns>Standard Paged Response of VineFollowers (similar to a VineProfile)</returns>
+        public async Task<VineFollowersResponse> MyFollowing(VinePagingOptions options = null)
         {
-            var request = GetBaseUserRequest(VineEndpoints.UserFollowers, Me);
+            var request = GetBaseUserRequest(VineEndpoints.UserFollowers, Me, options);
+            
             return await GetReuslt<VineFollowersResponse>(request);
         }
 
-        public async Task<VineFollowersResponse> UserFollowing(long userId)
+        /// <summary>
+        /// Gets a paged list of people the specified user is following
+        /// </summary>
+        /// <param name="userId">User Id</param>
+        /// <param name="options">paging options</param>
+        /// <returns>Standard Paged Response of VineFollowers (similar to a VineProfile)</returns>
+        public async Task<VineFollowersResponse> UserFollowing(long userId, VinePagingOptions options = null)
         {
-            var request = GetBaseUserRequest(VineEndpoints.UserFollowing, userId.ToString(CultureInfo.InvariantCulture));
+            var request = GetBaseUserRequest(VineEndpoints.UserFollowing, userId.ToString(CultureInfo.InvariantCulture), options);
+            
             return await GetReuslt<VineFollowersResponse>(request);
         }
 
-        
+        ///////// Timelines /////////
 
+        /// <summary>
+        /// Gets a paged list of posts in the authenticated user's timeline
+        /// </summary>
+        /// <param name="options">paging options</param>
+        /// <returns>Standard Paged Response of VinePosts</returns>
         public async Task<VineTimelineResponse> MyTimeline(VinePagingOptions options = null)
         {
             var request = GetBaseUserRequest(VineEndpoints.TimelineUser, Me);
             AddPagingOptions(request, options);
+
             return await GetReuslt<VineTimelineResponse>(request);
         }
 
+        /// <summary>
+        /// Gets a paged list of posts for a specified user's timeline
+        /// </summary>
+        /// <param name="userId">User Id</param>
+        /// <param name="options">paging options</param>
+        /// <returns>Standard Paged Response of VinePosts</returns>
         public async Task<VineTimelineResponse> UserTimeline(long userId, VinePagingOptions options = null)
         {
             var request = GetBaseUserRequest(VineEndpoints.TimelineUser, userId.ToString(CultureInfo.InvariantCulture));
             AddPagingOptions(request, options);
+
             return await GetReuslt<VineTimelineResponse>(request);
         }
 
-        public async Task<VineTimelineResponse> PopularTimeline()
+        /// <summary>
+        /// Gets a paged list of popular posts
+        /// </summary>
+        /// <param name="options">paging options</param>
+        /// <returns>Standard Paged Response of VinePosts</returns>
+        public async Task<VineTimelineResponse> PopularTimeline(VinePagingOptions options = null)
         {
             var request = GetBaseRequest(VineEndpoints.TimelinesPopular);
-
+            AddPagingOptions(request, options);
             return await GetReuslt<VineTimelineResponse>(request);
         }
 
+        /// <summary>
+        /// Gets a paged list of posts with a given hashtag
+        /// </summary>
+        /// <param name="tag">Hashtag with the # removed (i.e. "#test" should be "test") </param>
+        /// <param name="options">paging options</param>
+        /// <returns>Standard Paged Response of VinePosts</returns>
         public async Task<VineTimelineResponse> TagTimeline(string tag, VinePagingOptions options = null)
         {
             var request = GetBaseRequest(VineEndpoints.TimelineTag);
             request.AddUrlSegment("tag", tag);
-
             AddPagingOptions(request, options);
 
             return await GetReuslt<VineTimelineResponse>(request);
         }
 
+        ///////// Post details /////////
+
+        /// <summary>
+        /// Gets a specific post, it will be wrapped in the standard paging response
+        /// </summary>
+        /// <param name="postId">Post Id</param>
+        /// <returns>Standard Paged Response containing 1 post</returns>
         public async Task<VineTimelineResponse> Post(long postId)
         {
-            var request = GetBaseRequest(VineEndpoints.SinglePost);
-            request.AddUrlSegment("postId", postId.ToString(CultureInfo.InvariantCulture));
+            var request = GetBasePostRequest(VineEndpoints.SinglePost, postId.ToString(CultureInfo.InvariantCulture));
 
             return await GetReuslt<VineTimelineResponse>(request);
         }
 
+        /// <summary>
+        /// Gets a paged list of likes for a given post
+        /// </summary>
+        /// <param name="postId">Post Id</param>
+        /// <param name="options">paging options</param>
+        /// <returns>Standard Paged Response of VineLikes</returns>
         public async Task<VineLikesResponse> Likes(long postId, VinePagingOptions options = null)
         {
-            var request = GetBasePostRequest(VineEndpoints.PostLikes, postId, options);
+            var request = GetBasePostRequest(VineEndpoints.PostLikes, postId.ToString(CultureInfo.InvariantCulture), options);
 
             return await GetReuslt<VineLikesResponse>(request);
         }
 
-        private RestRequest GetBasePostRequest(string endpoint, long postId, VinePagingOptions options = null)
+        /// <summary>
+        /// Gets a paged list of comments for a given post
+        /// </summary>
+        /// <param name="postId">Post Id</param>
+        /// <param name="options">paging options</param>
+        /// <returns>Standard Paged Response of VineComments</returns>
+        public async Task<VineCommentsResponse> Comments(long postId, VinePagingOptions options = null)
         {
-            var request = GetBaseRequest(endpoint);
+            var request = GetBaseRequest(VineEndpoints.PostComments);
             request.AddUrlSegment("postId", postId.ToString(CultureInfo.InvariantCulture));
 
             AddPagingOptions(request, options);
-            return request;
+
+            return await GetReuslt<VineCommentsResponse>(request);
         }
 
         //public async Task<VineLikesResponse> AddLike(long postId)
@@ -181,41 +261,49 @@ namespace VineSharp
         //    return await GetReuslt<VineLikesResponse>(request);
         //}
 
-        public async Task<VineCommentsResponse> Comments(long postId, VinePagingOptions options = null)
-        {
-            var request = GetBaseRequest(VineEndpoints.PostComments);
-            request.AddUrlSegment("postId", postId.ToString(CultureInfo.InvariantCulture));
-
-            AddPagingOptions(request, options);
-
-            return await GetReuslt<VineCommentsResponse>(request);
-        }
-
         #region Helpers
         private static RestRequest GetBaseRequest(string endpoint, HttpMethod method = null, ContentTypes contentType = ContentTypes.Json)
         {
             method = method ?? HttpMethod.Get;
             var request = new RestRequest(endpoint, method, contentType);
             // looks like portable rest controls the default user agent, this forces it for the request
-            request.AddHeader("user-agent", "com.vine.iphone/1.0.3 (unknown, iPhone OS 6.0.1, iPhone, Scale/2.000000)");
+            request.AddHeader("user-agent", "com.vine.iphone/1.0.3 (unknown, iPhone OS 7.0.0, iPhone, Scale/2.000000)");
             
             return request;
         }
 
-        private static RestRequest GetBaseUserRequest(string endpoint, string userId)
+        private static RestRequest GetBaseUserRequest(string endpoint, string userId, VinePagingOptions options = null)
         {
             var request = GetBaseRequest(endpoint);
             request.AddUrlSegment("userId", userId);
+
+            AddPagingOptions(request, options);
+
             return request;
         }
 
-        private void AddPagingOptions(RestRequest request, VinePagingOptions options)
+        private static RestRequest GetBasePostRequest(string endpoint, string postId, VinePagingOptions options = null)
+        {
+            var request = GetBaseRequest(endpoint);
+            request.AddUrlSegment("postId", postId);
+            AddPagingOptions(request, options);
+
+            return request;
+        }
+
+        private static void AddPagingOptions(RestRequest request, VinePagingOptions options)
         {
             if (options == null)
                 return;
 
             if (options.Size != default(int))
                 request.AddQueryString("size", options.Size);
+
+            if (options.Page != default(int))
+                request.AddQueryString("size", options.Page);
+
+            if (options.Anchor != default(long))
+                request.AddQueryString("anchor", options.Anchor);
         }
 
         private async Task<T> GetReuslt<T>(RestRequest request, bool requireAuth = true) where T : class
@@ -224,18 +312,14 @@ namespace VineSharp
             var response = await client.SendAsync<T>(request);
 
             if (response.Exception != null || !response.HttpResponseMessage.IsSuccessStatusCode)
-                throw GetResponseException<T>(response);
+                throw GetResponseException(response);
 
             return response.Content;
         }
 
-        private Exception GetResponseException<T>(RestResponse<T> response) where T : class 
+        private Exception GetResponseException<T>(RestResponse<T> response) where T : class
         {
-            if (response.Exception != null)
-                return response.Exception;
-
-            return new VineSharpRestException<T>(response);
-
+            return response.Exception ?? new VineSharpRestException<T>(response);
         }
 
         private async Task<RestClient> GetClient(bool requireAuth = true)
@@ -257,7 +341,10 @@ namespace VineSharp
             // authenticate and add headers
             if (_authenticatedUser == null)
             {
-                await Authenticate();
+                // Authenticate sets the _authenticatedUser property
+                var authResult = await Authenticate();
+                // set the current authenticated user
+                _authenticatedUser = authResult.Data;
             }
 
             client.AddHeader("vine-session-id", _authenticatedUser.Key);
