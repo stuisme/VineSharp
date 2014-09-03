@@ -47,3 +47,23 @@ Most calls are also wrapped the their standard paging wrapper.
     foreach(var post in result.Data.Records){
         // do something
     }
+
+Endpoints Convered
+------------------
+
+Users
+ - users/authenticate
+ - users/me
+ - users/profile/{userId}
+ - users/{userId}/followers
+
+Timelines
+ - Wrapper for what should be timelines/me
+ - timelines/users/{userId}
+ - timelines/tags/{tag}
+ - timelines/posts/{postId}
+ -- pulls a single post in the standard paged wrapper
+
+Post Details
+ - posts/{postId}/likes
+ - posts/{postId}/comments
