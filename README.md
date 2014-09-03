@@ -3,7 +3,7 @@ VineSharp
 
 Wrapper for the undocumented Vine API. Since it is undocumented, it is also unsupported and is subject to change. This library is not intended for production use.
 
-Since Vine does not have a documented API, or the ability to OAuth. You must provide a username and password to obtain a valid token.
+Since Vine does not provide public OAuth for Apps, a username and password are required to obtain a valid token.
 
 Getting Started
 ---------------
@@ -19,7 +19,7 @@ Getting Started
 
 Base Response
 -------------
-The vine API wraps all thier responses with a standard wrapper.
+The Vine API wraps all responses with a standard wrapper.
 
     {
       "code": "",
@@ -30,12 +30,12 @@ The vine API wraps all thier responses with a standard wrapper.
 
 The Basics
 ----------
-All call to the vine server are async.
+All calls to the Vine API are async.
 
     var result = await vineClient.MyProfile();
     //result.Data.AvatarUrl
 
-Most calls are also wrapped the their standard paging wrapper.
+Most calls are also wrapped with a standard paging wrapper.
     
     var options = new new VinePagingOptions
     {
@@ -44,7 +44,8 @@ Most calls are also wrapped the their standard paging wrapper.
     };
     var result = await vineClient.TagTimeline("test", options);
     
-    foreach(var post in result.Data.Records){
+    foreach(var post in result.Data.Records)
+    {
         // do something
     }
 
@@ -58,11 +59,10 @@ Users
  - users/{userId}/followers
 
 Timelines
- - Wrapper for what should be timelines/me
+ - MyTimeline wrapper for the authenticated user
  - timelines/users/{userId}
  - timelines/tags/{tag}
- - timelines/posts/{postId}
- -- pulls a single post in the standard paged wrapper
+ - timelines/posts/{postId} (single post in the standard paging wrapper)
 
 Post Details
  - posts/{postId}/likes
