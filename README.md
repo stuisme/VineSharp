@@ -3,10 +3,15 @@ VineSharp
 
 Wrapper for the undocumented Vine API. Since it is undocumented, it is also unsupported and is subject to change. This library is not intended for production use.
 
-Since Vine does not provide public OAuth for Apps, a username and password are required to obtain a valid token.
+https://www.nuget.org/packages/VineSharp/
+
 
 Getting Started
 ---------------
+
+    Install-Package VineSharp
+
+Since Vine does not provide public OAuth for Apps, a username and password are required to obtain a valid token.
 
     var vineClient = new VineClient();
     vineClient.SetCredentials(Username, Password);
