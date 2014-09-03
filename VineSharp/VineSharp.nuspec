@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>VineSharp</id>
+    <version>0.0.1</version>
+    <title>VineSharp async Vine API wrapper</title>
+    <authors>stuisme</authors>
+    <owners>AppFiend Studios</owners>
+    <projectUrl>https://github.com/stuisme/VineSharp</projectUrl>
+    <licenseUrl>https://github.com/stuisme/VineSharp/blob/master/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A simple async wrapper for Vine's undocumented API.</description>
+    <releaseNotes>Initial Release</releaseNotes>
+    <copyright>Copyright 2014</copyright>
+    <tags>Vine API Social SocialMedia REST</tags>
+  </metadata>
+</package>

@@ -1,0 +1,5 @@
+packages/*
+*.suo
+*proj.user
+*/obj/*
+*/bin/*
