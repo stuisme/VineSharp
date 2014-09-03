@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -83,7 +80,21 @@ namespace VineSharp
         {
             var request = GetBaseRequest(VineEndpoints.UserProfile);
             request.AddUrlSegment("userId", userId.ToString(CultureInfo.InvariantCulture));
+
             return await GetReuslt<VineProfileResponse>(request);
+        }
+
+        public async Task<VineFollowersResponse> MyFollowers()
+        {
+            return await UserFollowers(_authenticatedUser.UserId);
+        }
+
+        public async Task<VineFollowersResponse> UserFollowers(long userId)
+        {
+            var request = GetBaseRequest(VineEndpoints.UserFollowers);
+            request.AddUrlSegment("userId", userId.ToString(CultureInfo.InvariantCulture));
+
+            return await GetReuslt<VineFollowersResponse>(request);
         }
 
         public async Task<VineTimelineResponse> MyTimeline(VinePagingOptions options = null)
@@ -101,6 +112,13 @@ namespace VineSharp
             return await GetReuslt<VineTimelineResponse>(request);
         }
 
+        public async Task<VineTimelineResponse> PopularTimeline()
+        {
+            var request = GetBaseRequest(VineEndpoints.TimelinesPopular);
+
+            return await GetReuslt<VineTimelineResponse>(request);
+        }
+
         public async Task<VineTimelineResponse> TagTimeline(string tag, VinePagingOptions options = null)
         {
             var request = GetBaseRequest(VineEndpoints.TimelineTag);
@@ -110,7 +128,34 @@ namespace VineSharp
 
             return await GetReuslt<VineTimelineResponse>(request);
         }
-        
+
+        public async Task<VineTimelineResponse> Post(long postId)
+        {
+            var request = GetBaseRequest(VineEndpoints.SinglePost);
+            request.AddUrlSegment("postId", postId.ToString(CultureInfo.InvariantCulture));
+
+            return await GetReuslt<VineTimelineResponse>(request);
+        }
+
+        public async Task<VineLikesResponse> Likes(long postId, VinePagingOptions options = null)
+        {
+            var request = GetBaseRequest(VineEndpoints.PostLikes);
+            request.AddUrlSegment("postId", postId.ToString(CultureInfo.InvariantCulture));
+
+            AddPagingOptions(request, options);
+
+            return await GetReuslt<VineLikesResponse>(request);
+        }
+
+        public async Task<VineCommentsResponse> Comments(long postId, VinePagingOptions options = null)
+        {
+            var request = GetBaseRequest(VineEndpoints.PostComments);
+            request.AddUrlSegment("postId", postId.ToString(CultureInfo.InvariantCulture));
+
+            AddPagingOptions(request, options);
+
+            return await GetReuslt<VineCommentsResponse>(request);
+        }
 
         #region Helpers
         private static RestRequest GetBaseRequest(string endpoint, HttpMethod method = null, ContentTypes contentType = ContentTypes.Json)
@@ -132,7 +177,7 @@ namespace VineSharp
                 request.AddQueryString("size", options.Size);
         }
 
-        private async Task<T> GetReuslt<T>(RestRequest request, bool requireAuth = true) where T : class 
+        private async Task<T> GetReuslt<T>(RestRequest request, bool requireAuth = true) where T : class
         {
             var client = await GetClient(requireAuth);
             var response = await client.SendAsync<T>(request);
