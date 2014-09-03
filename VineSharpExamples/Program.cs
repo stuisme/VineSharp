@@ -14,8 +14,8 @@ namespace VineSharpExamples
             var vineClient = new VineClient();
             vineClient.SetCredentials(Username, Password);
 
-            var result = vineClient.MyProfile().Result;
-            Console.Write(JsonConvert.SerializeObject(result, Formatting.Indented));
+            //var result = vineClient.MyProfile().Result;
+            //Console.Write(JsonConvert.SerializeObject(result, Formatting.Indented));
 
             //Console.WriteLine();
             //Console.WriteLine();
@@ -84,6 +84,20 @@ namespace VineSharpExamples
 
             //var result10 = vineClient.UserFollowers(1100682554694316032).Result;
             //Console.Write(JsonConvert.SerializeObject(result10, Formatting.Indented));
+
+            //Console.WriteLine();
+            //Console.WriteLine();
+            //Console.WriteLine();
+
+            //var result11 = vineClient.UserFollowing(1100682554694316032).Result;
+            //Console.Write(JsonConvert.SerializeObject(result11, Formatting.Indented));
+
+            //Console.WriteLine();
+            //Console.WriteLine();
+            //Console.WriteLine();
+
+            var result12 = vineClient.MyFollowing().Result;
+            Console.Write(JsonConvert.SerializeObject(result12, Formatting.Indented));
 
             Console.ReadLine();
         }

@@ -18,6 +18,7 @@ namespace VineSharp
 {
     public class VineClient
     {
+        private const string Me = "me";
         private string _username;
         private string _password;
         private VineAuthentication _authenticatedUser = null;
@@ -76,39 +77,50 @@ namespace VineSharp
             return await GetReuslt<VineProfileResponse>(request);
         }
 
-        public async Task<VineProfileResponse> Profile(long userId)
+        public async Task<VineProfileResponse> UserProfile(long userId)
         {
-            var request = GetBaseRequest(VineEndpoints.UserProfile);
-            request.AddUrlSegment("userId", userId.ToString(CultureInfo.InvariantCulture));
-
+            var request = GetBaseUserRequest(VineEndpoints.UserProfile, userId.ToString(CultureInfo.InvariantCulture));
             return await GetReuslt<VineProfileResponse>(request);
         }
 
         public async Task<VineFollowersResponse> MyFollowers()
         {
-            return await UserFollowers(_authenticatedUser.UserId);
+            var request = GetBaseUserRequest(VineEndpoints.UserFollowing, Me);
+            return await GetReuslt<VineFollowersResponse>(request);
         }
 
         public async Task<VineFollowersResponse> UserFollowers(long userId)
         {
-            var request = GetBaseRequest(VineEndpoints.UserFollowers);
-            request.AddUrlSegment("userId", userId.ToString(CultureInfo.InvariantCulture));
+            var request = GetBaseUserRequest(VineEndpoints.UserFollowers, userId.ToString(CultureInfo.InvariantCulture));
 
             return await GetReuslt<VineFollowersResponse>(request);
         }
 
+        public async Task<VineFollowersResponse> MyFollowing()
+        {
+            var request = GetBaseUserRequest(VineEndpoints.UserFollowers, Me);
+            return await GetReuslt<VineFollowersResponse>(request);
+        }
+
+        public async Task<VineFollowersResponse> UserFollowing(long userId)
+        {
+            var request = GetBaseUserRequest(VineEndpoints.UserFollowing, userId.ToString(CultureInfo.InvariantCulture));
+            return await GetReuslt<VineFollowersResponse>(request);
+        }
+
+        
+
         public async Task<VineTimelineResponse> MyTimeline(VinePagingOptions options = null)
         {
-            return await UserTimeline(_authenticatedUser.UserId, options);
+            var request = GetBaseUserRequest(VineEndpoints.TimelineUser, Me);
+            AddPagingOptions(request, options);
+            return await GetReuslt<VineTimelineResponse>(request);
         }
 
         public async Task<VineTimelineResponse> UserTimeline(long userId, VinePagingOptions options = null)
         {
-            var request = GetBaseRequest(VineEndpoints.TimelineUser);
-            request.AddUrlSegment("userId", userId.ToString(CultureInfo.InvariantCulture));
-
+            var request = GetBaseUserRequest(VineEndpoints.TimelineUser, userId.ToString(CultureInfo.InvariantCulture));
             AddPagingOptions(request, options);
-
             return await GetReuslt<VineTimelineResponse>(request);
         }
 
@@ -139,13 +151,35 @@ namespace VineSharp
 
         public async Task<VineLikesResponse> Likes(long postId, VinePagingOptions options = null)
         {
-            var request = GetBaseRequest(VineEndpoints.PostLikes);
-            request.AddUrlSegment("postId", postId.ToString(CultureInfo.InvariantCulture));
-
-            AddPagingOptions(request, options);
+            var request = GetBasePostRequest(VineEndpoints.PostLikes, postId, options);
 
             return await GetReuslt<VineLikesResponse>(request);
         }
+
+        private RestRequest GetBasePostRequest(string endpoint, long postId, VinePagingOptions options = null)
+        {
+            var request = GetBaseRequest(endpoint);
+            request.AddUrlSegment("postId", postId.ToString(CultureInfo.InvariantCulture));
+
+            AddPagingOptions(request, options);
+            return request;
+        }
+
+        //public async Task<VineLikesResponse> AddLike(long postId)
+        //{
+        //    var request = GetBaseRequest(VineEndpoints.PostLikes, HttpMethod.Post);
+        //    request.AddUrlSegment("postId", postId.ToString(CultureInfo.InvariantCulture));
+
+        //    return await GetReuslt<VineLikesResponse>(request);
+        //}
+
+        //public async Task<VineLikesResponse> RemovedLike(long postId)
+        //{
+        //    var request = GetBaseRequest(VineEndpoints.PostLikes, HttpMethod.Delete);
+        //    request.AddUrlSegment("postId", postId.ToString(CultureInfo.InvariantCulture));
+
+        //    return await GetReuslt<VineLikesResponse>(request);
+        //}
 
         public async Task<VineCommentsResponse> Comments(long postId, VinePagingOptions options = null)
         {
@@ -165,6 +199,13 @@ namespace VineSharp
             // looks like portable rest controls the default user agent, this forces it for the request
             request.AddHeader("user-agent", "com.vine.iphone/1.0.3 (unknown, iPhone OS 6.0.1, iPhone, Scale/2.000000)");
             
+            return request;
+        }
+
+        private static RestRequest GetBaseUserRequest(string endpoint, string userId)
+        {
+            var request = GetBaseRequest(endpoint);
+            request.AddUrlSegment("userId", userId);
             return request;
         }
 
