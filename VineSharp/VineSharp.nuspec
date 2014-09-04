@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>VineSharp</id>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
     <title>VineSharp Vine API wrapper</title>
     <authors>stuisme</authors>
     <owners>AppFiend Studios</owners>
@@ -10,7 +10,7 @@
     <licenseUrl>https://github.com/stuisme/VineSharp/blob/master/LICENSE</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A simple async wrapper for the Vine API.</description>
-    <releaseNotes>Added more endpoints, fixed bug with paging options.</releaseNotes>
+    <releaseNotes>Fixed package to use new vine api url. Added like a post and un-like a post.</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <tags>Vine API Social Vines Hashtags Hashtag Twitter SocialMedia REST csharp</tags>
   </metadata>
