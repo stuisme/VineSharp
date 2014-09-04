@@ -2,7 +2,7 @@
 {
     internal static class VineEndpoints
     {
-        internal const string BaseUrl = "https://api.vineapp.com/";
+        internal const string BaseUrl = "https://vine.co/api/";
 
         internal const string Authenticate = "users/authenticate";
         internal const string UsersMe = "users/me";

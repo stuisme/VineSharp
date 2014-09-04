@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using PortableRest;
 using VineSharp.Constants;
@@ -245,21 +246,31 @@ namespace VineSharp
             return await GetReuslt<VineCommentsResponse>(request);
         }
 
-        //public async Task<VineLikesResponse> AddLike(long postId)
-        //{
-        //    var request = GetBaseRequest(VineEndpoints.PostLikes, HttpMethod.Post);
-        //    request.AddUrlSegment("postId", postId.ToString(CultureInfo.InvariantCulture));
+        /// <summary>
+        /// Likes a post for the authenticated user
+        /// </summary>
+        /// <param name="postId">postId</param>
+        /// <returns>Standard Response of Like Acknowledgement</returns>
+        public async Task<VineLikeCreation> AddLike(long postId)
+        {
+            var request = GetBaseRequest(VineEndpoints.PostLikes, HttpMethod.Post);
+            request.AddUrlSegment("postId", postId.ToString(CultureInfo.InvariantCulture));
 
-        //    return await GetReuslt<VineLikesResponse>(request);
-        //}
+            return await GetReuslt<VineLikeCreation>(request);
+        }
 
-        //public async Task<VineLikesResponse> RemovedLike(long postId)
-        //{
-        //    var request = GetBaseRequest(VineEndpoints.PostLikes, HttpMethod.Delete);
-        //    request.AddUrlSegment("postId", postId.ToString(CultureInfo.InvariantCulture));
+        /// <summary>
+        /// Stops liking a post for the authenticated user
+        /// </summary>
+        /// <param name="postId">Post Id</param>
+        /// <returns></returns>
+        public async Task<VineEmptyDataResponse> RemovedLike(long postId)
+        {
+            var request = GetBaseRequest(VineEndpoints.PostLikes, HttpMethod.Delete);
+            request.AddUrlSegment("postId", postId.ToString(CultureInfo.InvariantCulture));
 
-        //    return await GetReuslt<VineLikesResponse>(request);
-        //}
+            return await GetReuslt<VineEmptyDataResponse>(request);
+        }
 
         #region Helpers
         private static RestRequest GetBaseRequest(string endpoint, HttpMethod method = null, ContentTypes contentType = ContentTypes.Json)
@@ -317,7 +328,7 @@ namespace VineSharp
             return response.Content;
         }
 
-        private Exception GetResponseException<T>(RestResponse<T> response) where T : class
+        private static Exception GetResponseException<T>(RestResponse<T> response) where T : class
         {
             return response.Exception ?? new VineSharpRestException<T>(response);
         }
