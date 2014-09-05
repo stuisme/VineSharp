@@ -13,62 +13,103 @@ Getting Started
 
 Since Vine does not provide public OAuth for Apps, a username and password are required to obtain a valid token.
 
+    var vineClient = new VineClient(Username, Password);
+    
+*- OR -*
+
     var vineClient = new VineClient();
     vineClient.SetCredentials(Username, Password);
 
-*- OR -*
+``VineClient`` will automatically authenticate with the provided credentials when it needs too. If you would like to store the token for later use, you can call ``VineClient.Authenticate()``.
 
-    var vineClient = new VineClient(Username, Password);
-
-``VineClient`` will automatically authenticate with the provided credentials when it needs too.
+*``VineClient.SetCredentials`` will cuase the current authenticated user to be reset.
 
 Base Response
 -------------
 The Vine API wraps all responses with a standard wrapper.
 
-    {
-      "code": "",
-      "success": true,
-      "error": "",
-      "data": {...}
-    }
+```
+{
+  "code": "",
+  "success": true,
+  "error": "",
+  "data": {...}
+}
+```
+
+Most calls are also wrapped with a standard paging wrapper.
+
+```
+{
+  "code": "",
+  "success": true,
+  "error": "",
+  "data": {
+    "count": 499,
+    "size": 20,
+    "anchorStr": "1234567890",
+    "anchor": 1234567890,
+    "backAnchor": "9876543210"
+    "records": [...]
+  }
+}
+```
 
 The Basics
 ----------
 All calls to the Vine API are async.
 
-    var result = await vineClient.MyProfile();
-    //result.Data.AvatarUrl
+```
+var result = await vineClient.MyProfile();
+//result.Data.AvatarUrl
+```
 
-Most calls are also wrapped with a standard paging wrapper.
-    
-    var options = new new VinePagingOptions
-    {
-        Size = 5,
-        Page = 2
-    };
-    var result = await vineClient.TagTimeline("test", options);
-    
-    foreach(var post in result.Data.Records)
-    {
-        // do something
-    }
+You can navigate through the pages with the optional paging options parameter.
+
+```    
+var options = new new VinePagingOptions
+{
+    Size = 5,
+    Page = 2,
+    Anchor = 123456789
+};
+var result = await vineClient.TagTimeline("test", options);
+
+foreach(var post in result.Data.Records)
+{
+    // do something
+}
+```
 
 Endpoints Covered
 ------------------
 
 Users
  - users/authenticate
+ -- POST
  - users/me
+ -- GET
  - users/profile/{userId}
+ -- GET
  - users/{userId}/followers
+ -- GET
 
 Timelines
- - MyTimeline wrapper for the authenticated user
+ - timeline/users/me
+ -- GET
  - timelines/users/{userId}
+ -- GET
  - timelines/tags/{tag}
+ -- GET
  - timelines/posts/{postId} (single post in the standard paging wrapper)
+ -- GET
 
 Post Details
  - posts/{postId}/likes
+ -- GET
+ -- POST
+ -- DELETE
  - posts/{postId}/comments
+
+
+Special thanks to https://github.com/starlock/vino for helping me "git" started
