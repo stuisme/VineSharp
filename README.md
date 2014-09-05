@@ -84,32 +84,35 @@ foreach(var post in result.Data.Records)
 Endpoints Covered
 ------------------
 
-Users
- - users/authenticate
- -- POST
- - users/me
- -- GET
- - users/profile/{userId}
- -- GET
- - users/{userId}/followers
- -- GET
+### Users
 
-Timelines
- - timeline/users/me
- -- GET
- - timelines/users/{userId}
- -- GET
- - timelines/tags/{tag}
- -- GET
- - timelines/posts/{postId} (single post in the standard paging wrapper)
- -- GET
+| Endpoint                    | Verb    | Method                                      | Comments
+|-----------------------------|---------|---------------------------------------------|-------------
+| users/authenticate          | POST    | .Authenticate()                             | Uses form encoded body
+| users/me                    | GET     | .MyProfile()                                | Profile
+| users/profile/{userId}      | GET     | .UserProfile(userId)                        | Profile
+| users/me/followers          | GET     | .MyFollowers(pagingOptions)                 | Paged Followers
+| users/{userId}/followers    | GET     | .UserFollowers(userId, pagingOptions)       | Paged Followers
+| users/me/following          | GET     | .MyFollowing(pagingOptions)                 | Paged Followers
+| users/{userId}/following    | GET     | .UserFollowing(userId, pagingOptions)       | Paged Followers
 
-Post Details
- - posts/{postId}/likes
- -- GET
- -- POST
- -- DELETE
- - posts/{postId}/comments
+### Timelines
+| Endpoint                    | Verb    | Method                                      | Comments
+|-----------------------------|---------|---------------------------------------------|----------
+| timeline/users/me           | GET     | .MyTimeline(pagingOptions)                  | Paged Posts
+| timelines/users/{userId}    | GET     | .UserTimeline(userId, pagingOptions)        | Paged Posts
+| timelines/popular           | GET     | .PopularTimeline(pagingOptions)             | Paged Posts
+| timelines/tags/{tag}        | GET     | .TagTimeline(tag, pagingOptions)            | Paged Posts
+| timelines/posts/{postId}    | GET     | .Post(postId)                               | Paged Posts with only 1 record
+
+### Posts
+| Endpoint                    | Verb    | Method                                      | Comments
+|-----------------------------|---------|---------------------------------------------|----------
+| posts/{postId}/likes        | GET     | .Likes(postId, pagingOptions)               | Paged Likes
+| posts/{postId}/likes        | POST    | .AddLike(postId)                            | Like Creation
+| posts/{postId}/likes        | DELETE  | .RemovedLike(postId)                        | Empty Data
+| posts/{postId}/comments     | GET     | .Comments(postId, pagingOptions)            | Paged Comments
+
 
 
 Special thanks to https://github.com/starlock/vino for helping me "git" started
