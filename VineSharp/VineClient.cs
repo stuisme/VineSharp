@@ -67,7 +67,7 @@ namespace VineSharp
             request.AddParameter("username", _username);
             request.AddParameter("password", _password);
 
-            var result = await GetReuslt<VineAuthenticationResponse>(request, false);
+            var result = await GetResult<VineAuthenticationResponse>(request, false);
             
             return result;
         }
@@ -82,7 +82,7 @@ namespace VineSharp
         {
             var request = GetBaseRequest(VineEndpoints.UsersMe);
             
-            return await GetReuslt<VineProfileResponse>(request);
+            return await GetResult<VineProfileResponse>(request);
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace VineSharp
         {
             var request = GetBaseUserRequest(VineEndpoints.UserProfile, userId.ToString(CultureInfo.InvariantCulture));
             
-            return await GetReuslt<VineProfileResponse>(request);
+            return await GetResult<VineProfileResponse>(request);
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace VineSharp
         {
             var request = GetBaseUserRequest(VineEndpoints.UserFollowing, Me, options);
             
-            return await GetReuslt<VineFollowersResponse>(request);
+            return await GetResult<VineFollowersResponse>(request);
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace VineSharp
         {
             var request = GetBaseUserRequest(VineEndpoints.UserFollowers, userId.ToString(CultureInfo.InvariantCulture), options);
             
-            return await GetReuslt<VineFollowersResponse>(request);
+            return await GetResult<VineFollowersResponse>(request);
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace VineSharp
         {
             var request = GetBaseUserRequest(VineEndpoints.UserFollowers, Me, options);
             
-            return await GetReuslt<VineFollowersResponse>(request);
+            return await GetResult<VineFollowersResponse>(request);
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace VineSharp
         {
             var request = GetBaseUserRequest(VineEndpoints.UserFollowing, userId.ToString(CultureInfo.InvariantCulture), options);
             
-            return await GetReuslt<VineFollowersResponse>(request);
+            return await GetResult<VineFollowersResponse>(request);
         }
 
         ///////// Timelines /////////
@@ -159,7 +159,7 @@ namespace VineSharp
             var request = GetBaseUserRequest(VineEndpoints.TimelineUser, Me);
             AddPagingOptions(request, options);
 
-            return await GetReuslt<VineTimelineResponse>(request);
+            return await GetResult<VineTimelineResponse>(request);
         }
 
         /// <summary>
@@ -173,7 +173,7 @@ namespace VineSharp
             var request = GetBaseUserRequest(VineEndpoints.TimelineUser, userId.ToString(CultureInfo.InvariantCulture));
             AddPagingOptions(request, options);
 
-            return await GetReuslt<VineTimelineResponse>(request);
+            return await GetResult<VineTimelineResponse>(request);
         }
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace VineSharp
         {
             var request = GetBaseRequest(VineEndpoints.TimelinesPopular);
             AddPagingOptions(request, options);
-            return await GetReuslt<VineTimelineResponse>(request);
+            return await GetResult<VineTimelineResponse>(request);
         }
 
         /// <summary>
@@ -200,7 +200,7 @@ namespace VineSharp
             request.AddUrlSegment("tag", tag);
             AddPagingOptions(request, options);
 
-            return await GetReuslt<VineTimelineResponse>(request);
+            return await GetResult<VineTimelineResponse>(request);
         }
 
         ///////// Post details /////////
@@ -214,7 +214,7 @@ namespace VineSharp
         {
             var request = GetBasePostRequest(VineEndpoints.SinglePost, postId.ToString(CultureInfo.InvariantCulture));
 
-            return await GetReuslt<VineTimelineResponse>(request);
+            return await GetResult<VineTimelineResponse>(request);
         }
 
         /// <summary>
@@ -227,7 +227,7 @@ namespace VineSharp
         {
             var request = GetBasePostRequest(VineEndpoints.PostLikes, postId.ToString(CultureInfo.InvariantCulture), options);
 
-            return await GetReuslt<VineLikesResponse>(request);
+            return await GetResult<VineLikesResponse>(request);
         }
 
         /// <summary>
@@ -243,7 +243,7 @@ namespace VineSharp
 
             AddPagingOptions(request, options);
 
-            return await GetReuslt<VineCommentsResponse>(request);
+            return await GetResult<VineCommentsResponse>(request);
         }
 
         /// <summary>
@@ -256,7 +256,7 @@ namespace VineSharp
             var request = GetBaseRequest(VineEndpoints.PostLikes, HttpMethod.Post);
             request.AddUrlSegment("postId", postId.ToString(CultureInfo.InvariantCulture));
 
-            return await GetReuslt<VineLikeCreation>(request);
+            return await GetResult<VineLikeCreation>(request);
         }
 
         /// <summary>
@@ -269,7 +269,7 @@ namespace VineSharp
             var request = GetBaseRequest(VineEndpoints.PostLikes, HttpMethod.Delete);
             request.AddUrlSegment("postId", postId.ToString(CultureInfo.InvariantCulture));
 
-            return await GetReuslt<VineEmptyDataResponse>(request);
+            return await GetResult<VineEmptyDataResponse>(request);
         }
 
         #region Helpers
@@ -317,7 +317,7 @@ namespace VineSharp
                 request.AddQueryString("anchor", options.Anchor);
         }
 
-        private async Task<T> GetReuslt<T>(RestRequest request, bool requireAuth = true) where T : class
+        private async Task<T> GetResult<T>(RestRequest request, bool requireAuth = true) where T : class
         {
             var client = await GetClient(requireAuth);
             var response = await client.SendAsync<T>(request);
