@@ -67,7 +67,7 @@ var result = await vineClient.MyProfile();
 You can navigate through the pages with the optional paging options parameter.
 
 ```    
-var options = new new VinePagingOptions
+var options = new VinePagingOptions
 {
     Size = 5,
     Page = 2,
